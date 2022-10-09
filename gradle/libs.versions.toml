@@ -1,0 +1,16 @@
+[versions]
+commonmark = "0.18.0"
+
+[libraries]
+commonmark-core = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
+commonmark-autolink = { module = "org.commonmark:commonmark-ext-autolink", version.ref = "commonmark" }
+commonmark-frontmatter = { module = "org.commonmark:commonmark-ext-yaml-front-matter", version.ref = "commonmark" }
+commonmark-tables = { module = "org.commonmark:commonmark-ext-gfm-tables", version.ref = "commonmark" }
+commonmark-tasklist = { module = "org.commonmark:commonmark-ext-task-list-items", version.ref = "commonmark" }
+
+[bundles]
+commonmark = ["commonmark-core", "commonmark-autolink", "commonmark-frontmatter","commonmark-tables","commonmark-tasklist"]
+
+[plugins]
+npm-commonmark-types = { id = "@types/commonmark", version = "0.27.0" }
+npm-commonmark-core = { id = "commonmark", version = "0.27.0" }
