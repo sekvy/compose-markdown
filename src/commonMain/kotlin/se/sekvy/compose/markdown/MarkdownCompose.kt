@@ -298,8 +298,7 @@ private fun OnLoadedImage(
     ) {
         bitmap?.let {
             Image(
-                modifier = Modifier.widthIn(max = 200.dp),
-                contentScale = ContentScale.FillWidth,
+                contentScale = ContentScale.Fit,
                 bitmap = it,
                 contentDescription = ""
             )

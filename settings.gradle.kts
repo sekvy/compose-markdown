@@ -8,4 +8,5 @@ pluginManagement {
     }
 }
 
+include(":test-app")
 includeBuild("convention-plugins")
