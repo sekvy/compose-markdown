@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "se.sekvy"
-version = "1.0.0-alpha01-dev1"
+version = "1.0.0-alpha01"
 
 repositories {
     mavenCentral()
