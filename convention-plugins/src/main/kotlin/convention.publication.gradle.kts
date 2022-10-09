@@ -17,7 +17,7 @@ ext["ossrhUsername"] = null
 ext["ossrhPassword"] = null
 
 // Grabbing secrets from local.properties file or from environment variables, which could be used on CI
-val secretPropsFile = project.rootProject.file("local.properties")
+private val secretPropsFile: File = project.rootProject.file("local.properties")
 if (secretPropsFile.exists()) {
     secretPropsFile.reader().use {
         Properties().apply {
@@ -88,8 +88,17 @@ publishing {
     }
 }
 
-// Signing artifacts. Signing.* extra properties values will be used
+// Check if signing data is available
+val isReleaseBuild: Boolean
+    get() = secretPropsFile.exists() && secretPropsFile.reader().use {
+        Properties().apply {
+            load(it)
+        }
+    }.containsKey("signing.keyId")
 
+// Signing artifacts. Signing.* extra properties values will be used
 signing {
-    sign(publishing.publications)
+    if (isReleaseBuild) {
+        sign(publishing.publications)
+    }
 }
