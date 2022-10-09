@@ -88,17 +88,9 @@ publishing {
     }
 }
 
-// Check if signing data is available
-val isReleaseBuild: Boolean
-    get() = secretPropsFile.exists() && secretPropsFile.reader().use {
-        Properties().apply {
-            load(it)
-        }
-    }.containsKey("signing.keyId")
-
 // Signing artifacts. Signing.* extra properties values will be used
 signing {
-    if (isReleaseBuild) {
+    if (project.ext.get("signing.keyId") != null) {
         sign(publishing.publications)
     }
 }

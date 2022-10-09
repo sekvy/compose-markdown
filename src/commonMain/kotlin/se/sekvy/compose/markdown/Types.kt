@@ -9,7 +9,7 @@ interface NodeType {
 }
 
 @Suppress("PropertyName")
-abstract class NodeImpl : NodeType {
+internal abstract class NodeImpl : NodeType {
     var _parent: NodeType? = null
     var _firstChild: NodeType? = null
     var _lastChild: NodeType? = null

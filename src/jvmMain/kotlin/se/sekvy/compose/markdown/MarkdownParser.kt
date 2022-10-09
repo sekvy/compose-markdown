@@ -25,8 +25,7 @@ actual class MarkdownParser actual constructor() {
     actual fun parse(input: String): NodeType {
         val parser = Parser.builder().build()
         val documentNode = parser.parse(input)
-        val nodeType = requireNotNull(documentNode.convert(parent = null, prev = null))
-        return nodeType
+        return requireNotNull(documentNode.convert(parent = null, prev = null))
     }
 }
 
