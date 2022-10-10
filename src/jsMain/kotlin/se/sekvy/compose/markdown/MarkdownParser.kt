@@ -19,7 +19,7 @@ fun Node.convert(parent: NodeType?, prev: NodeType?) = when (type) {
     "code_block" -> FencedCodeBlockImpl(literal = literal ?: "")
     "image" -> ImageImpl(destination = destination ?: "")
     "list" -> {
-        when (listType) {
+        when (listType.lowercase()) {
             "bullet" -> {
                 BulletListImpl(bulletMarker = _listData.bulletChar?.toCharArray()?.firstOrNull() ?: '*')
             }
