@@ -6,7 +6,7 @@ plugins {
     // id("org.jetbrains.compose") version "1.2.0-beta03"
 
     kotlin("multiplatform") version "1.7.10"
-    id("org.jetbrains.compose") version "1.2.0-beta02-dev795"
+    id("org.jetbrains.compose") version "1.2.0-rc02"
     id("org.jetbrains.dokka") version "1.7.10"
     id("convention.publication")
 }
@@ -44,14 +44,6 @@ kotlin {
             }
         }
     }
-    val hostOs = System.getProperty("os.name")
-    val isMingwX64 = hostOs.startsWith("Windows")
-    val nativeTarget = when {
-        hostOs == "Mac OS X" -> macosX64("native")
-        hostOs == "Linux" -> linuxX64("native")
-        isMingwX64 -> mingwX64("native")
-        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-    }
 
     sourceSets {
         val commonMain by getting {
@@ -79,6 +71,5 @@ kotlin {
             }
         }
         val jvmTest by getting
-        val nativeMain by getting
     }
 }
