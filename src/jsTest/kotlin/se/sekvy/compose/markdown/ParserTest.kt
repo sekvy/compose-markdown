@@ -11,14 +11,14 @@ class ParserTest() {
         val parser = Parser()
         val node = parser.parse("Hello *world*")
         val walker = node.walker()
-        assertEquals(expected = "document" , actual = walker.next().node.type)
-        assertEquals(expected = "paragraph" , actual = walker.next().node.type)
-        assertEquals(expected = "text" , actual = walker.next().node.type)
-        assertEquals(expected = "emph" , actual = walker.next().node.type)
-        assertEquals(expected = "text" , actual = walker.next().node.type)
-        assertEquals(expected = "emph" , actual = walker.next().node.type)
-        assertEquals(expected = "paragraph" , actual = walker.next().node.type)
-        assertEquals(expected = "document" , actual = walker.next().node.type)
+        assertEquals(expected = "document", actual = walker.next().node.type)
+        assertEquals(expected = "paragraph", actual = walker.next().node.type)
+        assertEquals(expected = "text", actual = walker.next().node.type)
+        assertEquals(expected = "emph", actual = walker.next().node.type)
+        assertEquals(expected = "text", actual = walker.next().node.type)
+        assertEquals(expected = "emph", actual = walker.next().node.type)
+        assertEquals(expected = "paragraph", actual = walker.next().node.type)
+        assertEquals(expected = "document", actual = walker.next().node.type)
     }
 
     @Test

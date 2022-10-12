@@ -32,7 +32,7 @@ private const val TAG_IMAGE_URL = "imageUrl"
 private val LocalLoadImage = compositionLocalOf<LoadImageConfig> { throw IllegalStateException("Not provided") }
 
 private data class LoadImageConfig(
-    val onLoadImage : suspend (path : String) -> ImageBitmap
+    val onLoadImage: suspend (path: String) -> ImageBitmap
 )
 
 /**
@@ -42,9 +42,9 @@ private data class LoadImageConfig(
  * @param onLoadImage A suspend function for loading images
  */
 @Composable
-fun ColumnScope.MDDocument(document: NodeType,  onLoadImage : suspend (path : String) -> ImageBitmap) {
+fun ColumnScope.MDDocument(document: NodeType, onLoadImage: suspend (path: String) -> ImageBitmap) {
     CompositionLocalProvider(
-        LocalLoadImage provides LoadImageConfig(onLoadImage),
+        LocalLoadImage provides LoadImageConfig(onLoadImage)
     ) {
         MDBlockChildren(document)
     }
@@ -69,7 +69,8 @@ private fun MDBlockChildren(parent: NodeType) {
 }
 
 private fun AnnotatedString.Builder.appendMarkdownChildren(
-    parent: NodeType, colors: Colors
+    parent: NodeType,
+    colors: Colors
 ) {
     var child = parent.firstChild
     while (child != null) {
@@ -120,7 +121,7 @@ private fun MDHeading(heading: Heading, modifier: Modifier = Modifier) {
         4 -> MaterialTheme.typography.h4
         5 -> MaterialTheme.typography.h5
         6 -> MaterialTheme.typography.h6
-        else ->  MaterialTheme.typography.h6
+        else -> MaterialTheme.typography.h6
     }
 
     val padding = if (heading.parent is Document) 8.dp else 0.dp
@@ -134,7 +135,7 @@ private fun MDHeading(heading: Heading, modifier: Modifier = Modifier) {
 
 @Composable
 private fun MDParagraph(paragraph: Paragraph, modifier: Modifier = Modifier) {
-    if (paragraph.firstChild is Image &&  paragraph.firstChild == paragraph.lastChild) {
+    if (paragraph.firstChild is Image && paragraph.firstChild == paragraph.lastChild) {
         // Paragraph with single image
         MDImage(paragraph.firstChild as Image, modifier)
     } else {
@@ -213,16 +214,18 @@ private fun MDListItems(
 private fun MDBlockQuote(blockQuote: BlockQuote, modifier: Modifier = Modifier) {
     val color = MaterialTheme.colors.onBackground
 
-    Box(modifier = modifier
-        .drawBehind {
-            drawLine(
-                color = color,
-                strokeWidth = 2f,
-                start = Offset(12.dp.value, 12.dp.value),
-                end = Offset(12.dp.value, size.height - 12.dp.value)
-            )
-        }
-        .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)) {
+    Box(
+        modifier = modifier
+            .drawBehind {
+                drawLine(
+                    color = color,
+                    strokeWidth = 2f,
+                    start = Offset(12.dp.value, 12.dp.value),
+                    end = Offset(12.dp.value, size.height - 12.dp.value)
+                )
+            }
+            .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+    ) {
         val text = buildAnnotatedString {
             pushStyle(
                 MaterialTheme.typography.body1.toSpanStyle()
@@ -249,7 +252,7 @@ private fun MDFencedCodeBlock(fencedCodeBlock: FencedCodeBlock, modifier: Modifi
 
 @Composable
 private fun MDThematicBreak(thematicBreak: ThematicBreak, modifier: Modifier = Modifier) {
-    //Ignored
+    // Ignored
 }
 
 @Composable
@@ -257,7 +260,8 @@ private fun MarkdownText(text: AnnotatedString, style: TextStyle, modifier: Modi
     val uriHandler = LocalUriHandler.current
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
 
-    Text(text = text,
+    Text(
+        text = text,
         modifier.pointerInput(Unit) {
             detectTapGestures { offset ->
                 layoutResult.value?.let { layoutResult ->
@@ -287,7 +291,7 @@ private fun MarkdownText(text: AnnotatedString, style: TextStyle, modifier: Modi
 @Composable
 private fun OnLoadedImage(
     modifier: Modifier = Modifier,
-    path: String,
+    path: String
 ) {
     var bitmap: ImageBitmap? by remember {
         mutableStateOf(null)

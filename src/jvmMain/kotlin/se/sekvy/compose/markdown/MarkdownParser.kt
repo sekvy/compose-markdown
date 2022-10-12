@@ -54,7 +54,7 @@ private fun Node.convert(parent: NodeType?, prev: NodeType?) =
         else -> throw IllegalStateException("Unsupported node ${this.javaClass.simpleName}")
     }.updateNode(this, parent, prev)
 
-private fun NodeImpl.updateNode(node : Node, parent : NodeType?, prev : NodeType?) : NodeType {
+private fun NodeImpl.updateNode(node: Node, parent: NodeType?, prev: NodeType?): NodeType {
     _parent = parent
     _prev = prev
 

@@ -33,7 +33,7 @@ interface Document : NodeType
 interface BlockQuote : NodeType
 
 interface Heading : NodeType {
-    val level : Int
+    val level: Int
 }
 
 interface ThematicBreak : NodeType
@@ -41,26 +41,26 @@ interface ThematicBreak : NodeType
 interface Paragraph : NodeType
 
 interface FencedCodeBlock : NodeType {
-    val literal : String
+    val literal: String
 }
 
 interface Image : NodeType {
-    val destination : String
+    val destination: String
 }
 
 interface ListBlock : NodeType
 
 interface BulletList : ListBlock {
-    val bulletMarker : Char
+    val bulletMarker: Char
 }
 
 interface OrderedList : ListBlock {
-    val startNumber : Int
-    val delimiter : Char
+    val startNumber: Int
+    val delimiter: Char
 }
 
 interface Text : NodeType {
-    val literal : String
+    val literal: String
 }
 
 interface Emphasis : NodeType
@@ -68,13 +68,13 @@ interface Emphasis : NodeType
 interface StrongEmphasis : NodeType
 
 interface Code : NodeType {
-    val literal : String
+    val literal: String
 }
 
 interface HardLineBreak : NodeType
 
 interface Link : NodeType {
-    val destination : String
+    val destination: String
 }
 
 interface ListItem : NodeType
