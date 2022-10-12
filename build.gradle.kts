@@ -9,6 +9,8 @@ plugins {
     id("org.jetbrains.compose") version "1.2.0-rc02"
     id("org.jetbrains.dokka") version "1.7.10"
     id("convention.publication")
+    alias(libs.plugins.benManesVersions)
+    alias(libs.plugins.kotlinter)
 }
 
 group = "se.sekvy"
