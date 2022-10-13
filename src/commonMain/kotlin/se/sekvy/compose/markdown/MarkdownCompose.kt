@@ -1,23 +1,44 @@
 package se.sekvy.compose.markdown
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.Colors
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.*
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +51,8 @@ private const val TAG_URL = "url"
 private const val TAG_IMAGE_URL = "imageUrl"
 
 private val LocalLoadImage = compositionLocalOf<LoadImageConfig> { throw IllegalStateException("Not provided") }
+
+private val showBorders = false
 
 private data class LoadImageConfig(
     val onLoadImage: suspend (path: String) -> ImageBitmap
@@ -125,7 +148,7 @@ private fun MDHeading(heading: Heading, modifier: Modifier = Modifier) {
     }
 
     val padding = if (heading.parent is Document) 8.dp else 0.dp
-    Box(modifier = modifier.padding(bottom = padding)) {
+    Box(modifier = modifier.showBorder().padding(bottom = padding)) {
         val text = buildAnnotatedString {
             appendMarkdownChildren(heading, MaterialTheme.colors)
         }
@@ -140,7 +163,7 @@ private fun MDParagraph(paragraph: Paragraph, modifier: Modifier = Modifier) {
         MDImage(paragraph.firstChild as Image, modifier)
     } else {
         val padding = if (paragraph.parent is Document) 8.dp else 0.dp
-        Box(modifier = modifier.padding(bottom = padding)) {
+        Box(modifier = modifier.showBorder().padding(bottom = padding)) {
             val styledText = buildAnnotatedString {
                 pushStyle(MaterialTheme.typography.body1.toSpanStyle())
                 appendMarkdownChildren(paragraph, MaterialTheme.colors)
@@ -193,7 +216,7 @@ private fun MDListItems(
 ) {
     val bottom = if (listBlock.parent is Document) 8.dp else 0.dp
     val start = if (listBlock.parent is Document) 0.dp else 8.dp
-    Column(modifier = modifier.padding(start = start, bottom = bottom)) {
+    Column(modifier = modifier.showBorder().padding(start = start, bottom = bottom)) {
         var listItem = listBlock.firstChild
         while (listItem != null) {
             var child = listItem.firstChild
@@ -215,7 +238,7 @@ private fun MDBlockQuote(blockQuote: BlockQuote, modifier: Modifier = Modifier) 
     val color = MaterialTheme.colors.onBackground
 
     Box(
-        modifier = modifier
+        modifier = modifier.showBorder()
             .drawBehind {
                 drawLine(
                     color = color,
@@ -241,7 +264,7 @@ private fun MDBlockQuote(blockQuote: BlockQuote, modifier: Modifier = Modifier) 
 @Composable
 private fun MDFencedCodeBlock(fencedCodeBlock: FencedCodeBlock, modifier: Modifier = Modifier) {
     val padding = if (fencedCodeBlock.parent is Document) 8.dp else 0.dp
-    Box(modifier = modifier.padding(start = 8.dp, bottom = padding)) {
+    Box(modifier = modifier.showBorder().padding(start = 8.dp, bottom = padding)) {
         Text(
             text = fencedCodeBlock.literal,
             style = TextStyle(fontFamily = FontFamily.Monospace),
@@ -252,7 +275,7 @@ private fun MDFencedCodeBlock(fencedCodeBlock: FencedCodeBlock, modifier: Modifi
 
 @Composable
 private fun MDThematicBreak(thematicBreak: ThematicBreak, modifier: Modifier = Modifier) {
-    // Ignored
+    Divider(modifier.fillMaxWidth().wrapContentHeight().showBorder(), thickness = 2.dp)
 }
 
 @Composable
@@ -298,7 +321,7 @@ private fun OnLoadedImage(
     }
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth().showBorder()
     ) {
         bitmap?.let {
             Image(
@@ -314,4 +337,8 @@ private fun OnLoadedImage(
             bitmap = loadBitmap(path)
         }
     }
+}
+
+fun Modifier.showBorder(color: Color = Color.Red): Modifier {
+    return if (showBorders) border(2.dp, color) else this
 }

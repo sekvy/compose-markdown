@@ -43,6 +43,9 @@
 *.iml
 *.ipr
 
+.idea/kotlinc.xml
+.idea/vcs.xml
+
 # CMake
 cmake-build-*/
 
@@ -155,7 +158,6 @@ build
 gpm.json
 
 /local.properties
-.idea/
 !.idea/codeStyles
 .DS_Store
 /captures
@@ -167,7 +169,6 @@ local.properties
 project-coverage.json
 latest-project-coverage.json
 project-coverage.html
-**/.idea
 task-timings.json
 timings.json
 local-settings.gradle
