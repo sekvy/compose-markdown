@@ -6,11 +6,11 @@ import Parser
 actual class MarkdownParser actual constructor() {
     actual fun parse(input: String): NodeType {
         val parser = Parser()
-        return requireNotNull(parser.parse(input).convert(null, null))
+        return requireNotNull(parser.parse(input).convert(null))
     }
 }
 
-fun Node.convert(parent: NodeType?, prev: NodeType?) = when (type) {
+fun Node.convert(parent: NodeType?) = when (type) {
     "document" -> DocumentImpl()
     "block_quote" -> BlockQuoteImpl()
     "heading" -> HeadingImpl(level = level.toInt())
@@ -41,20 +41,24 @@ fun Node.convert(parent: NodeType?, prev: NodeType?) = when (type) {
     "link" -> LinkImpl(destination = destination ?: "")
     "item" -> ListItemImpl()
     else -> throw IllegalStateException("Unsupported Node $type")
-}?.updateNode(this, parent, prev)
+}?.updateNode(this, parent)
 
-internal fun NodeImpl.updateNode(node: Node, parent: NodeType?, prev: NodeType?): NodeType {
+private fun NodeImpl.updateNode(node: Node, parent: NodeType?): NodeType {
     _parent = parent
-    _firstChild = node.firstChild?.convert(parent = this, prev = null)
-    _lastChild = _firstChild
-
-    var current = _firstChild?.next
-    while (current != null) {
-        _lastChild = current
-        current = current.next
-    }
-
-    _next = node.next?.convert(parent = parent, prev = this)
-    _prev = prev
+    _children.addAll(
+        node.children().map {
+            it.convert(this)
+        }.filterNotNull().toList()
+    )
     return this
+}
+
+fun Node.children(): Sequence<Node> {
+    return sequence {
+        var current = firstChild
+        while (current != null) {
+            yield(current)
+            current = current.next
+        }
+    }
 }

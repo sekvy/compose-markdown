@@ -25,14 +25,14 @@ actual class MarkdownParser actual constructor() {
     actual fun parse(input: String): NodeType {
         val parser = Parser.builder().build()
         val documentNode = parser.parse(input)
-        return requireNotNull(documentNode.convert(parent = null, prev = null))
+        return requireNotNull(documentNode.convert(parent = null))
     }
 }
 
 /**
  * Recursive traversal of the node tree to convert it to a common format.
  */
-private fun Node.convert(parent: NodeType?, prev: NodeType?) =
+private fun Node.convert(parent: NodeType?) =
     when (this) {
         is Document -> DocumentImpl()
         is BlockQuote -> BlockQuoteImpl()
@@ -52,21 +52,24 @@ private fun Node.convert(parent: NodeType?, prev: NodeType?) =
         is ListItem -> ListItemImpl()
         is SoftLineBreak -> SoftLineBreakImpl()
         else -> throw IllegalStateException("Unsupported node ${this.javaClass.simpleName}")
-    }.updateNode(this, parent, prev)
+    }.updateNode(this, parent)
 
-private fun NodeImpl.updateNode(node: Node, parent: NodeType?, prev: NodeType?): NodeType {
+private fun NodeImpl.updateNode(node: Node, parent: NodeType?): NodeType {
     _parent = parent
-    _prev = prev
-
-    _firstChild = node.firstChild?.convert(parent = this, prev = null)
-    _lastChild = _firstChild
-
-    var current = _firstChild?.next
-    while (current != null) {
-        _lastChild = current
-        current = current.next
-    }
-
-    _next = node.next?.convert(parent = parent, prev = this)
+    _children.addAll(
+        node.children().map {
+            it.convert(this)
+        }.toList()
+    )
     return this
+}
+
+fun Node.children(): Sequence<Node> {
+    return sequence {
+        var current = firstChild
+        while (current != null) {
+            yield(current)
+            current = current.next
+        }
+    }
 }

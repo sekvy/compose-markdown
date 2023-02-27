@@ -2,30 +2,18 @@ package se.sekvy.compose.markdown
 
 interface NodeType {
     val parent: NodeType?
-    val firstChild: NodeType?
-    val lastChild: NodeType?
-    val prev: NodeType?
-    val next: NodeType?
+    val children: List<NodeType>
 }
 
 @Suppress("PropertyName")
 internal abstract class NodeImpl : NodeType {
+    val _children: MutableList<NodeType> = mutableListOf()
     var _parent: NodeType? = null
-    var _firstChild: NodeType? = null
-    var _lastChild: NodeType? = null
-    var _prev: NodeType? = null
-    var _next: NodeType? = null
 
     override val parent: NodeType?
         get() = _parent
-    override val firstChild: NodeType?
-        get() = _firstChild
-    override val lastChild: NodeType?
-        get() = _lastChild
-    override val prev: NodeType?
-        get() = _prev
-    override val next: NodeType?
-        get() = _next
+    override val children: List<NodeType>
+        get() = _children
 }
 
 interface Document : NodeType
@@ -78,6 +66,9 @@ interface Link : NodeType {
 }
 
 interface ListItem : NodeType
+interface ListItemDelimiter : NodeType {
+    val literal: String
+}
 
 interface SoftLineBreak : NodeType
 
@@ -97,4 +88,12 @@ internal class CodeImpl(override val literal: String) : NodeImpl(), Code
 internal class HardLineBreakImpl : NodeImpl(), HardLineBreak
 internal class LinkImpl(override val destination: String) : NodeImpl(), Link
 internal class ListItemImpl : NodeImpl(), ListItem
+internal class ListItemDelimiterImpl(override val literal: String) : NodeImpl(), ListItemDelimiter
 internal class SoftLineBreakImpl : NodeImpl(), SoftLineBreak
+
+fun NodeType.asString(indent: String = ""): String {
+    val out = this::class.simpleName ?: ""
+    return out + "\n$indent" + children.joinToString("\n$indent") {
+        it.asString("$indent ")
+    }
+}

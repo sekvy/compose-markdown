@@ -75,8 +75,7 @@ fun ColumnScope.MDDocument(document: NodeType, onLoadImage: suspend (path: Strin
 
 @Composable
 private fun MDBlockChildren(parent: NodeType) {
-    var child = parent.firstChild
-    while (child != null) {
+    parent.children.forEach { child ->
         when (child) {
             is BlockQuote -> MDBlockQuote(child)
             is ThematicBreak -> MDThematicBreak(child)
@@ -87,7 +86,6 @@ private fun MDBlockChildren(parent: NodeType) {
             is BulletList -> MDBulletList(child)
             is OrderedList -> MDOrderedList(child)
         }
-        child = child.next
     }
 }
 
@@ -95,8 +93,7 @@ private fun AnnotatedString.Builder.appendMarkdownChildren(
     parent: NodeType,
     colors: Colors
 ) {
-    var child = parent.firstChild
-    while (child != null) {
+    parent.children.forEach { child ->
         when (child) {
             is Paragraph -> appendMarkdownChildren(child, colors)
             is Text -> append(child.literal)
@@ -131,7 +128,6 @@ private fun AnnotatedString.Builder.appendMarkdownChildren(
                 pop()
             }
         }
-        child = child.next
     }
 }
 
@@ -158,9 +154,9 @@ private fun MDHeading(heading: Heading, modifier: Modifier = Modifier) {
 
 @Composable
 private fun MDParagraph(paragraph: Paragraph, modifier: Modifier = Modifier) {
-    if (paragraph.firstChild is Image && paragraph.firstChild == paragraph.lastChild) {
+    if (paragraph.children.first() is Image && paragraph.children.size == 1) {
         // Paragraph with single image
-        MDImage(paragraph.firstChild as Image, modifier)
+        MDImage(paragraph.children.first() as Image, modifier)
     } else {
         val padding = if (paragraph.parent is Document) 8.dp else 0.dp
         Box(modifier = modifier.showBorder().padding(bottom = padding)) {
@@ -217,18 +213,12 @@ private fun MDListItems(
     val bottom = if (listBlock.parent is Document) 8.dp else 0.dp
     val start = if (listBlock.parent is Document) 0.dp else 8.dp
     Column(modifier = modifier.showBorder().padding(start = start, bottom = bottom)) {
-        var listItem = listBlock.firstChild
-        while (listItem != null) {
-            var child = listItem.firstChild
-            while (child != null) {
-                when (child) {
-                    is BulletList -> MDBulletList(child, modifier)
-                    is OrderedList -> MDOrderedList(child, modifier)
-                    else -> item(child)
-                }
-                child = child.next
+        listBlock.children.forEach {
+            when (it) {
+                is BulletList -> MDBulletList(it, modifier)
+                is OrderedList -> MDOrderedList(it, modifier)
+                else -> item(it)
             }
-            listItem = listItem.next
         }
     }
 }

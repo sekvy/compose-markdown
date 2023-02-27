@@ -6,7 +6,7 @@ plugins {
     // id("org.jetbrains.compose") version "1.2.0-beta03"
 
     kotlin("multiplatform") version "1.7.10"
-    id("org.jetbrains.compose") version "1.2.0-rc02"
+    id("org.jetbrains.compose") version "1.3.0"
     id("org.jetbrains.dokka") version "1.7.10"
     id("convention.publication")
     alias(libs.plugins.benManesVersions)
@@ -54,6 +54,7 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material)
                 implementation(compose.runtime)
+                implementation(libs.jetbrains.markdown)
             }
         }
         val commonTest by getting {
