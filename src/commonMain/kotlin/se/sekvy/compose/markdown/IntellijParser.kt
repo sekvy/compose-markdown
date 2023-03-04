@@ -1,12 +1,13 @@
 package se.sekvy.compose.markdown
 
+import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.getTextInNode
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 
-class IntellijParser {
+internal class IntellijParser {
     fun parse(input: String): NodeType {
         val flavour = CommonMarkFlavourDescriptor()
         val node = org.intellij.markdown.parser.MarkdownParser(flavour)
@@ -58,8 +59,7 @@ private fun ASTNode.convert(input: String, parent: NodeType?): NodeType? {
                 FencedCodeBlockImpl(literal = input.subSequence(codeFenceContent.startOffset, codeFenceEnd.startOffset).toString())
             } else {
                 FencedCodeBlockImpl(
-                    literal = children.find { it.type == MarkdownElementTypes.CODE_FENCE }
-                        ?.getTextInNode(input)?.toString() ?: ""
+                    literal = getTextInChildNode(input, MarkdownElementTypes.CODE_FENCE)
                 )
             }
         }
@@ -93,26 +93,26 @@ private fun ASTNode.convert(input: String, parent: NodeType?): NodeType? {
                 is Image -> {
                     skipChildren = true
                     TextImpl(
-                        literal = children.find { it.type == MarkdownElementTypes.LINK_DESTINATION }
-                            ?.getTextInNode(input)?.toString() ?: ""
+                        literal = getTextInChildNode(input, MarkdownElementTypes.LINK_DESTINATION)
                     )
                 }
                 else -> LinkImpl(
-                    destination = children.find { it.type == MarkdownElementTypes.LINK_DESTINATION }
-                        ?.getTextInNode(input)?.toString() ?: ""
+                    destination = getTextInChildNode(input, MarkdownElementTypes.LINK_DESTINATION)
                 )
             }
         }
         MarkdownElementTypes.LINK_TEXT -> {
             skipChildren = true
             TextImpl(
-                literal = children.find { it.type == MarkdownTokenTypes.TEXT }
-                    ?.getTextInNode(input)?.toString() ?: ""
+                literal = getTextInChildNode(input, MarkdownTokenTypes.TEXT)
             )
         }
         else -> null
     }?.updateNode(input = input, node = this, parent = parent, skipChildren = skipChildren)
 }
+
+private fun ASTNode.getTextInChildNode(input: String, nodeType: IElementType): String =
+    children.find { it.type == nodeType }?.getTextInNode(input)?.toString() ?: ""
 
 private fun NodeImpl.updateNode(input: String, node: ASTNode, parent: NodeType?, skipChildren: Boolean = false): NodeType {
     _parent = parent

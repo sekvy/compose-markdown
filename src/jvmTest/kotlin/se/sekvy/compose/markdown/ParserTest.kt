@@ -62,10 +62,6 @@ class ParserTest() {
             2. B
             3. C
         """.trimIndent()
-        val intellijAstNodes = org.intellij.markdown.parser.MarkdownParser(flavour)
-            .buildMarkdownTreeFromString(aft)
-        val commonMarkAstNodes = MarkdownParser().parse(aft)
-
         compareParsers(aft)
     }
 
@@ -93,10 +89,6 @@ class ParserTest() {
             ```
         """.trimIndent()
 
-        val intellijAstNodes = org.intellij.markdown.parser.MarkdownParser(CommonMarkFlavourDescriptor())
-            .buildMarkdownTreeFromString(aft)
-        val commonMarkAstNodes = MarkdownParser().parse(aft)
-
         compareParsers(aft)
     }
 
@@ -107,8 +99,8 @@ class ParserTest() {
     }
 
     private fun compareParsers(input: String) {
-        val intellijParserNode = IntellijParser().parse(input)
-        val commonMarkParserNode = MarkdownParser().parse(input)
+        val intellijParserNode = MarkdownParser(ParserType.Intellij).parse(input)
+        val commonMarkParserNode = MarkdownParser(ParserType.CommonMark).parse(input)
         assertEquals(commonMarkParserNode.asString(), intellijParserNode.asString())
     }
 }

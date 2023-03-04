@@ -3,14 +3,19 @@ package se.sekvy.compose.markdown
 import Node
 import Parser
 
-actual class MarkdownParser actual constructor() {
-    actual fun parse(input: String): NodeType {
-        val parser = Parser()
-        return requireNotNull(parser.parse(input).convert(null))
+actual class MarkdownParser actual constructor(private val parserType: ParserType) {
+    actual fun parse(input: String) = when (parserType) {
+        ParserType.CommonMark -> {
+            val parser = Parser()
+            requireNotNull(parser.parse(input).convert(null))
+        }
+        ParserType.Intellij -> {
+            IntellijParser().parse(input)
+        }
     }
 }
 
-fun Node.convert(parent: NodeType?) = when (type) {
+private fun Node.convert(parent: NodeType?) = when (type) {
     "document" -> DocumentImpl()
     "block_quote" -> BlockQuoteImpl()
     "heading" -> HeadingImpl(level = level.toInt())
@@ -53,7 +58,7 @@ private fun NodeImpl.updateNode(node: Node, parent: NodeType?): NodeType {
     return this
 }
 
-fun Node.children(): Sequence<Node> {
+private fun Node.children(): Sequence<Node> {
     return sequence {
         var current = firstChild
         while (current != null) {
@@ -61,4 +66,8 @@ fun Node.children(): Sequence<Node> {
             current = current.next
         }
     }
+}
+
+actual enum class ParserType {
+    CommonMark, Intellij
 }

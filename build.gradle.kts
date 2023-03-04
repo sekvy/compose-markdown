@@ -1,10 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 plugins {
-    // https://github.com/JetBrains/compose-jb/issues/2349
-    // kotlin("multiplatform") version "1.7.20"
-    // id("org.jetbrains.compose") version "1.2.0-beta03"
-
     kotlin("multiplatform") version "1.7.10"
     id("org.jetbrains.compose") version "1.3.0"
     id("org.jetbrains.dokka") version "1.7.10"

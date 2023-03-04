@@ -21,12 +21,23 @@ import org.commonmark.node.ThematicBreak
 import org.commonmark.parser.Parser
 import java.lang.IllegalStateException
 
-actual class MarkdownParser actual constructor() {
+actual class MarkdownParser actual constructor(val parserType: ParserType) {
     actual fun parse(input: String): NodeType {
-        val parser = Parser.builder().build()
-        val documentNode = parser.parse(input)
-        return requireNotNull(documentNode.convert(parent = null))
+        when (parserType) {
+            ParserType.CommonMark -> {
+                val parser = Parser.builder().build()
+                val documentNode = parser.parse(input)
+                return requireNotNull(documentNode.convert(parent = null))
+            }
+            ParserType.Intellij -> {
+                return IntellijParser().parse(input)
+            }
+        }
     }
+}
+
+actual enum class ParserType {
+    CommonMark, Intellij
 }
 
 /**
@@ -64,7 +75,7 @@ private fun NodeImpl.updateNode(node: Node, parent: NodeType?): NodeType {
     return this
 }
 
-fun Node.children(): Sequence<Node> {
+private fun Node.children(): Sequence<Node> {
     return sequence {
         var current = firstChild
         while (current != null) {
