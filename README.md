@@ -5,7 +5,7 @@ Kotlin Multiplatform library for rendering Markdown with Compose
 commonMain {
     dependencies {
         // ...
-        implementation("se.sekvy:compose-markdown:1.0.0-alpha01")
+        implementation("se.sekvy:compose-markdown:1.0.0-alpha02")
     }
 }
 ```
@@ -20,7 +20,7 @@ fun showArticle(path: String) {
 
     LaunchedEffect(path) {
         val bytes = loadBytesFromPath(path)
-        nodeType = MarkdownParser().parse(bytes.decodeToString())
+        nodeType = MarkdownParser(ParserType.CommonMark).parse(bytes.decodeToString())
     }
 
     nodeType?.let {
