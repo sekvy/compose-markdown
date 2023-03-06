@@ -15,6 +15,12 @@ ext["signing.password"] = null
 ext["signing.secretKeyRingFile"] = null
 ext["ossrhUsername"] = null
 ext["ossrhPassword"] = null
+ext["info.project.url"] = null
+ext["info.project.name"] = null
+ext["info.project.description"] = null
+ext["info.developer.id"] = null
+ext["info.developer.name"] = null
+ext["info.developer.email"] = null
 
 // Grabbing secrets from local.properties file or from environment variables, which could be used on CI
 private val secretPropsFile: File = project.rootProject.file("local.properties")
@@ -32,6 +38,12 @@ if (secretPropsFile.exists()) {
     ext["signing.secretKeyRingFile"] = System.getenv("SIGNING_SECRET_KEY_RING_FILE")
     ext["ossrhUsername"] = System.getenv("OSSRH_USERNAME")
     ext["ossrhPassword"] = System.getenv("OSSRH_PASSWORD")
+    ext["info.project.url"] = System.getenv("INFO_PROJECT_URL")
+    ext["info.project.name"] = System.getenv("INFO_PROJECT_NAME")
+    ext["info.project.description"] = System.getenv("INFO_PROJECT_DESCRIPTION")
+    ext["info.developer.id"] = System.getenv("INFO_DEVELOPER_ID")
+    ext["info.developer.name"] = System.getenv("INFO_DEVELOPER_NAME")
+    ext["info.developer.email"] = System.getenv("INFO_DEVELOPER_EMAIL")
 }
 
 val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
@@ -64,9 +76,9 @@ publishing {
 
         // Provide artifacts information requited by Maven Central
         pom {
-            name.set("Compose Markdown")
-            description.set("Kotlin Multiplatform library for rendering Markdown with Compose")
-            url.set("https://github.com/sekvy/compose-markdown")
+            name.set(getExtraString("info.project.name"))
+            description.set(getExtraString("info.project.description"))
+            url.set(getExtraString("info.project.url"))
 
             licenses {
                 license {
@@ -76,13 +88,13 @@ publishing {
             }
             developers {
                 developer {
-                    id.set("sekvy")
-                    name.set("Simon Ekvy")
-                    email.set("simon.ekvy@gmail.com")
+                    id.set(getExtraString("info.developer.id"))
+                    name.set(getExtraString("info.developer.name"))
+                    email.set(getExtraString("info.developer.email"))
                 }
             }
             scm {
-                url.set("https://github.com/sekvy/compose-markdown")
+                url.set(getExtraString("info.project.url"))
             }
         }
     }
