@@ -55,7 +55,7 @@ private val LocalLoadImage = compositionLocalOf<LoadImageConfig> { throw Illegal
 private val showBorders = false
 
 private data class LoadImageConfig(
-    val onLoadImage: suspend (path: String) -> ImageBitmap
+    val onLoadImage: suspend (path: String) -> ImageBitmap,
 )
 
 /**
@@ -65,9 +65,12 @@ private data class LoadImageConfig(
  * @param onLoadImage A suspend function for loading images
  */
 @Composable
-fun ColumnScope.MDDocument(document: NodeType, onLoadImage: suspend (path: String) -> ImageBitmap) {
+fun ColumnScope.MDDocument(
+    document: NodeType,
+    onLoadImage: suspend (path: String) -> ImageBitmap,
+) {
     CompositionLocalProvider(
-        LocalLoadImage provides LoadImageConfig(onLoadImage)
+        LocalLoadImage provides LoadImageConfig(onLoadImage),
     ) {
         MDBlockChildren(document)
     }
@@ -91,7 +94,7 @@ private fun MDBlockChildren(parent: NodeType) {
 
 private fun AnnotatedString.Builder.appendMarkdownChildren(
     parent: NodeType,
-    colors: Colors
+    colors: Colors,
 ) {
     parent.children.forEach { child ->
         when (child) {
@@ -132,74 +135,94 @@ private fun AnnotatedString.Builder.appendMarkdownChildren(
 }
 
 @Composable
-private fun MDHeading(heading: Heading, modifier: Modifier = Modifier) {
-    val style = when (heading.level) {
-        1 -> MaterialTheme.typography.h1
-        2 -> MaterialTheme.typography.h2
-        3 -> MaterialTheme.typography.h3
-        4 -> MaterialTheme.typography.h4
-        5 -> MaterialTheme.typography.h5
-        6 -> MaterialTheme.typography.h6
-        else -> MaterialTheme.typography.h6
-    }
+private fun MDHeading(
+    heading: Heading,
+    modifier: Modifier = Modifier,
+) {
+    val style =
+        when (heading.level) {
+            1 -> MaterialTheme.typography.h1
+            2 -> MaterialTheme.typography.h2
+            3 -> MaterialTheme.typography.h3
+            4 -> MaterialTheme.typography.h4
+            5 -> MaterialTheme.typography.h5
+            6 -> MaterialTheme.typography.h6
+            else -> MaterialTheme.typography.h6
+        }
 
     val padding = if (heading.parent is Document) 8.dp else 0.dp
     Box(modifier = modifier.showBorder().padding(bottom = padding)) {
-        val text = buildAnnotatedString {
-            appendMarkdownChildren(heading, MaterialTheme.colors)
-        }
+        val text =
+            buildAnnotatedString {
+                appendMarkdownChildren(heading, MaterialTheme.colors)
+            }
         MarkdownText(text, style)
     }
 }
 
 @Composable
-private fun MDParagraph(paragraph: Paragraph, modifier: Modifier = Modifier) {
+private fun MDParagraph(
+    paragraph: Paragraph,
+    modifier: Modifier = Modifier,
+) {
     if (paragraph.children.first() is Image && paragraph.children.size == 1) {
         // Paragraph with single image
         MDImage(paragraph.children.first() as Image, modifier)
     } else {
         val padding = if (paragraph.parent is Document) 8.dp else 0.dp
         Box(modifier = modifier.showBorder().padding(bottom = padding)) {
-            val styledText = buildAnnotatedString {
-                pushStyle(MaterialTheme.typography.body1.toSpanStyle())
-                appendMarkdownChildren(paragraph, MaterialTheme.colors)
-                pop()
-            }
+            val styledText =
+                buildAnnotatedString {
+                    pushStyle(MaterialTheme.typography.body1.toSpanStyle())
+                    appendMarkdownChildren(paragraph, MaterialTheme.colors)
+                    pop()
+                }
             MarkdownText(styledText, MaterialTheme.typography.body1)
         }
     }
 }
 
 @Composable
-private fun MDImage(image: Image, modifier: Modifier = Modifier) {
+private fun MDImage(
+    image: Image,
+    modifier: Modifier = Modifier,
+) {
     OnLoadedImage(modifier = modifier.padding(16.dp), path = image.destination)
 }
 
 @Composable
-private fun MDBulletList(bulletList: BulletList, modifier: Modifier = Modifier) {
+private fun MDBulletList(
+    bulletList: BulletList,
+    modifier: Modifier = Modifier,
+) {
     val marker = bulletList.bulletMarker
     MDListItems(bulletList, modifier = modifier) {
-        val text = buildAnnotatedString {
-            pushStyle(MaterialTheme.typography.body1.toSpanStyle())
-            append("$marker ")
-            appendMarkdownChildren(it, MaterialTheme.colors)
-            pop()
-        }
+        val text =
+            buildAnnotatedString {
+                pushStyle(MaterialTheme.typography.body1.toSpanStyle())
+                append("$marker ")
+                appendMarkdownChildren(it, MaterialTheme.colors)
+                pop()
+            }
         MarkdownText(text, MaterialTheme.typography.body1, modifier)
     }
 }
 
 @Composable
-private fun MDOrderedList(orderedList: OrderedList, modifier: Modifier = Modifier) {
+private fun MDOrderedList(
+    orderedList: OrderedList,
+    modifier: Modifier = Modifier,
+) {
     var number = orderedList.startNumber
     val delimiter = orderedList.delimiter
     MDListItems(orderedList, modifier) {
-        val text = buildAnnotatedString {
-            pushStyle(MaterialTheme.typography.body1.toSpanStyle())
-            append("${number++}$delimiter ")
-            appendMarkdownChildren(it, MaterialTheme.colors)
-            pop()
-        }
+        val text =
+            buildAnnotatedString {
+                pushStyle(MaterialTheme.typography.body1.toSpanStyle())
+                append("${number++}$delimiter ")
+                appendMarkdownChildren(it, MaterialTheme.colors)
+                pop()
+            }
         MarkdownText(text, MaterialTheme.typography.body1, modifier)
     }
 }
@@ -208,7 +231,7 @@ private fun MDOrderedList(orderedList: OrderedList, modifier: Modifier = Modifie
 private fun MDListItems(
     listBlock: ListBlock,
     modifier: Modifier = Modifier,
-    item: @Composable (node: NodeType) -> Unit
+    item: @Composable (node: NodeType) -> Unit,
 ) {
     val bottom = if (listBlock.parent is Document) 8.dp else 0.dp
     val start = if (listBlock.parent is Document) 0.dp else 8.dp
@@ -224,52 +247,68 @@ private fun MDListItems(
 }
 
 @Composable
-private fun MDBlockQuote(blockQuote: BlockQuote, modifier: Modifier = Modifier) {
+private fun MDBlockQuote(
+    blockQuote: BlockQuote,
+    modifier: Modifier = Modifier,
+) {
     val color = MaterialTheme.colors.onBackground
 
     Box(
-        modifier = modifier.showBorder()
-            .drawBehind {
-                drawLine(
-                    color = color,
-                    strokeWidth = 2f,
-                    start = Offset(12.dp.value, 12.dp.value),
-                    end = Offset(12.dp.value, size.height - 12.dp.value)
-                )
-            }
-            .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+        modifier =
+            modifier
+                .showBorder()
+                .drawBehind {
+                    drawLine(
+                        color = color,
+                        strokeWidth = 2f,
+                        start = Offset(12.dp.value, 12.dp.value),
+                        end = Offset(12.dp.value, size.height - 12.dp.value),
+                    )
+                }.padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
     ) {
-        val text = buildAnnotatedString {
-            pushStyle(
-                MaterialTheme.typography.body1.toSpanStyle()
-                    .plus(SpanStyle(fontStyle = FontStyle.Italic))
-            )
-            appendMarkdownChildren(blockQuote, MaterialTheme.colors)
-            pop()
-        }
+        val text =
+            buildAnnotatedString {
+                pushStyle(
+                    MaterialTheme.typography.body1
+                        .toSpanStyle()
+                        .plus(SpanStyle(fontStyle = FontStyle.Italic)),
+                )
+                appendMarkdownChildren(blockQuote, MaterialTheme.colors)
+                pop()
+            }
         Text(text, modifier)
     }
 }
 
 @Composable
-private fun MDFencedCodeBlock(fencedCodeBlock: FencedCodeBlock, modifier: Modifier = Modifier) {
+private fun MDFencedCodeBlock(
+    fencedCodeBlock: FencedCodeBlock,
+    modifier: Modifier = Modifier,
+) {
     val padding = if (fencedCodeBlock.parent is Document) 8.dp else 0.dp
     Box(modifier = modifier.showBorder().padding(start = 8.dp, bottom = padding)) {
         Text(
             text = fencedCodeBlock.literal,
             style = TextStyle(fontFamily = FontFamily.Monospace),
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }
 
 @Composable
-private fun MDThematicBreak(thematicBreak: ThematicBreak, modifier: Modifier = Modifier) {
+private fun MDThematicBreak(
+    thematicBreak: ThematicBreak,
+    modifier: Modifier = Modifier,
+) {
     Divider(modifier.fillMaxWidth().wrapContentHeight().showBorder(), thickness = 2.dp)
 }
 
 @Composable
-private fun MarkdownText(text: AnnotatedString, style: TextStyle, modifier: Modifier = Modifier) {
+private fun MarkdownText(
+    text: AnnotatedString,
+    style: TextStyle,
+    modifier: Modifier = Modifier,
+) {
     val uriHandler = LocalUriHandler.current
     val layoutResult = remember { mutableStateOf<TextLayoutResult?>(null) }
 
@@ -279,7 +318,8 @@ private fun MarkdownText(text: AnnotatedString, style: TextStyle, modifier: Modi
             detectTapGestures { offset ->
                 layoutResult.value?.let { layoutResult ->
                     val position = layoutResult.getOffsetForPosition(offset)
-                    text.getStringAnnotations(position, position)
+                    text
+                        .getStringAnnotations(position, position)
                         .firstOrNull()
                         ?.let { sa ->
                             if (sa.tag == TAG_URL) {
@@ -290,34 +330,36 @@ private fun MarkdownText(text: AnnotatedString, style: TextStyle, modifier: Modi
             }
         },
         style = style,
-        inlineContent = mapOf(
-            TAG_IMAGE_URL to InlineTextContent(
-                Placeholder(style.fontSize, style.fontSize, PlaceholderVerticalAlign.Bottom)
-            ) {
-                OnLoadedImage(modifier = modifier, path = it)
-            }
-        ),
-        onTextLayout = { layoutResult.value = it }
+        inlineContent =
+            mapOf(
+                TAG_IMAGE_URL to
+                    InlineTextContent(
+                        Placeholder(style.fontSize, style.fontSize, PlaceholderVerticalAlign.Bottom),
+                    ) {
+                        OnLoadedImage(modifier = modifier, path = it)
+                    },
+            ),
+        onTextLayout = { layoutResult.value = it },
     )
 }
 
 @Composable
 private fun OnLoadedImage(
     modifier: Modifier = Modifier,
-    path: String
+    path: String,
 ) {
     var bitmap: ImageBitmap? by remember {
         mutableStateOf(null)
     }
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxWidth().showBorder()
+        modifier = modifier.fillMaxWidth().showBorder(),
     ) {
         bitmap?.let {
             Image(
                 contentScale = ContentScale.Fit,
                 bitmap = it,
-                contentDescription = ""
+                contentDescription = "",
             )
         }
     }
@@ -329,6 +371,4 @@ private fun OnLoadedImage(
     }
 }
 
-fun Modifier.showBorder(color: Color = Color.Red): Modifier {
-    return if (showBorders) border(2.dp, color) else this
-}
+fun Modifier.showBorder(color: Color = Color.Red): Modifier = if (showBorders) border(2.dp, color) else this

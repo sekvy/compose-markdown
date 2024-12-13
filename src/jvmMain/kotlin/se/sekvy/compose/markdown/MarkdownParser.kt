@@ -21,7 +21,9 @@ import org.commonmark.node.ThematicBreak
 import org.commonmark.parser.Parser
 import java.lang.IllegalStateException
 
-actual class MarkdownParser actual constructor(val parserType: ParserType) {
+actual class MarkdownParser actual constructor(
+    val parserType: ParserType,
+) {
     actual fun parse(input: String): NodeType {
         when (parserType) {
             ParserType.CommonMark -> {
@@ -37,7 +39,8 @@ actual class MarkdownParser actual constructor(val parserType: ParserType) {
 }
 
 actual enum class ParserType {
-    CommonMark, Intellij
+    CommonMark,
+    Intellij,
 }
 
 /**
@@ -65,22 +68,26 @@ private fun Node.convert(parent: NodeType?) =
         else -> throw IllegalStateException("Unsupported node ${this.javaClass.simpleName}")
     }.updateNode(this, parent)
 
-private fun NodeImpl.updateNode(node: Node, parent: NodeType?): NodeType {
+private fun NodeImpl.updateNode(
+    node: Node,
+    parent: NodeType?,
+): NodeType {
     _parent = parent
     _children.addAll(
-        node.children().map {
-            it.convert(this)
-        }.toList()
+        node
+            .children()
+            .map {
+                it.convert(this)
+            }.toList(),
     )
     return this
 }
 
-private fun Node.children(): Sequence<Node> {
-    return sequence {
+private fun Node.children(): Sequence<Node> =
+    sequence {
         var current = firstChild
         while (current != null) {
             yield(current)
             current = current.next
         }
     }
-}

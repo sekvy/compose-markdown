@@ -10,8 +10,10 @@ import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 internal class IntellijParser {
     fun parse(input: String): NodeType {
         val flavour = CommonMarkFlavourDescriptor()
-        val node = org.intellij.markdown.parser.MarkdownParser(flavour)
-            .buildMarkdownTreeFromString(input)
+        val node =
+            org.intellij.markdown.parser
+                .MarkdownParser(flavour)
+                .buildMarkdownTreeFromString(input)
         return requireNotNull(node.convert(input, null))
     }
 }
@@ -19,12 +21,16 @@ internal class IntellijParser {
 /**
  * Recursive traversal of the node tree to convert it to a common format.
  */
-private fun ASTNode.convert(input: String, parent: NodeType?): NodeType? {
+private fun ASTNode.convert(
+    input: String,
+    parent: NodeType?,
+): NodeType? {
     var skipChildren = false
     return when (type) {
         MarkdownElementTypes.MARKDOWN_FILE -> DocumentImpl()
         MarkdownElementTypes.SETEXT_1,
-        MarkdownElementTypes.SETEXT_2 -> {
+        MarkdownElementTypes.SETEXT_2,
+        -> {
             if (parent !is Heading) {
                 HeadingImpl(level = type.name.last().digitToInt())
             } else {
@@ -37,17 +43,20 @@ private fun ASTNode.convert(input: String, parent: NodeType?): NodeType? {
         MarkdownElementTypes.ATX_3,
         MarkdownElementTypes.ATX_4,
         MarkdownElementTypes.ATX_5,
-        MarkdownElementTypes.ATX_6 -> HeadingImpl(level = type.name.last().digitToInt())
+        MarkdownElementTypes.ATX_6,
+        -> HeadingImpl(level = type.name.last().digitToInt())
         MarkdownElementTypes.BLOCK_QUOTE -> BlockQuoteImpl()
         MarkdownTokenTypes.HORIZONTAL_RULE -> ThematicBreakImpl()
         MarkdownElementTypes.PARAGRAPH -> ParagraphImpl()
         MarkdownTokenTypes.SETEXT_CONTENT,
-        MarkdownTokenTypes.ATX_CONTENT -> {
+        MarkdownTokenTypes.ATX_CONTENT,
+        -> {
             skipChildren = true
             TextImpl(literal = getTextInNode(input).toString().trim())
         }
         MarkdownTokenTypes.WHITE_SPACE,
-        MarkdownTokenTypes.TEXT -> {
+        MarkdownTokenTypes.TEXT,
+        -> {
             skipChildren = true
             TextImpl(literal = getTextInNode(input).toString())
         }
@@ -59,14 +68,16 @@ private fun ASTNode.convert(input: String, parent: NodeType?): NodeType? {
                 FencedCodeBlockImpl(literal = input.subSequence(codeFenceContent.startOffset, codeFenceEnd.startOffset).toString())
             } else {
                 FencedCodeBlockImpl(
-                    literal = getTextInChildNode(input, MarkdownElementTypes.CODE_FENCE)
+                    literal = getTextInChildNode(input, MarkdownElementTypes.CODE_FENCE),
                 )
             }
         }
         MarkdownElementTypes.IMAGE -> {
-            val destination = getTextInNode(input).toString()
-                .substringAfter("(")
-                .substringBefore(")")
+            val destination =
+                getTextInNode(input)
+                    .toString()
+                    .substringAfter("(")
+                    .substringBefore(")")
             ImageImpl(destination = destination)
         }
         MarkdownElementTypes.UNORDERED_LIST -> {
@@ -93,34 +104,42 @@ private fun ASTNode.convert(input: String, parent: NodeType?): NodeType? {
                 is Image -> {
                     skipChildren = true
                     TextImpl(
-                        literal = getTextInChildNode(input, MarkdownElementTypes.LINK_DESTINATION)
+                        literal = getTextInChildNode(input, MarkdownElementTypes.LINK_DESTINATION),
                     )
                 }
-                else -> LinkImpl(
-                    destination = getTextInChildNode(input, MarkdownElementTypes.LINK_DESTINATION)
-                )
+                else ->
+                    LinkImpl(
+                        destination = getTextInChildNode(input, MarkdownElementTypes.LINK_DESTINATION),
+                    )
             }
         }
         MarkdownElementTypes.LINK_TEXT -> {
             skipChildren = true
             TextImpl(
-                literal = getTextInChildNode(input, MarkdownTokenTypes.TEXT)
+                literal = getTextInChildNode(input, MarkdownTokenTypes.TEXT),
             )
         }
         else -> null
     }?.updateNode(input = input, node = this, parent = parent, skipChildren = skipChildren)
 }
 
-private fun ASTNode.getTextInChildNode(input: String, nodeType: IElementType): String =
-    children.find { it.type == nodeType }?.getTextInNode(input)?.toString() ?: ""
+private fun ASTNode.getTextInChildNode(
+    input: String,
+    nodeType: IElementType,
+): String = children.find { it.type == nodeType }?.getTextInNode(input)?.toString() ?: ""
 
-private fun NodeImpl.updateNode(input: String, node: ASTNode, parent: NodeType?, skipChildren: Boolean = false): NodeType {
+private fun NodeImpl.updateNode(
+    input: String,
+    node: ASTNode,
+    parent: NodeType?,
+    skipChildren: Boolean = false,
+): NodeType {
     _parent = parent
     if (!skipChildren) {
         _children.addAll(
             node.children.mapNotNull {
                 it.convert(input, this)
-            }
+            },
         )
     }
     return this

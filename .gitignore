@@ -178,3 +178,4 @@ mre-tools/
 /test-plan.json
 /test-app
 .idea
+.kotlin/

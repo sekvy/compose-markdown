@@ -1,8 +1,11 @@
 [versions]
 commonmark = "0.18.0"
-ben-manes-versions = "0.42.0"
-kotlinter = "3.12.0"
-jetbrains-markdown = "0.3.1"
+ben-manes-versions = "0.51.0"
+kotlinter = "5.0.1"
+jetbrains-markdown = "0.7.3"
+kotlin = "2.1.0"
+compose-multiplatform = "1.7.0"
+androidx-lifecycle = "2.8.4"
 
 [libraries]
 commonmark-core = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
@@ -11,6 +14,8 @@ commonmark-frontmatter = { module = "org.commonmark:commonmark-ext-yaml-front-ma
 commonmark-tables = { module = "org.commonmark:commonmark-ext-gfm-tables", version.ref = "commonmark" }
 commonmark-tasklist = { module = "org.commonmark:commonmark-ext-task-list-items", version.ref = "commonmark" }
 jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrains-markdown" }
+androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 
 [bundles]
 commonmark = ["commonmark-core", "commonmark-autolink", "commonmark-frontmatter","commonmark-tables","commonmark-tasklist"]
@@ -20,3 +25,6 @@ npm-commonmark-types = { id = "@types/commonmark", version = "0.27.0" }
 npm-commonmark-core = { id = "commonmark", version = "0.27.0" }
 kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
 benManesVersions = { id = "com.github.ben-manes.versions", version.ref = "ben-manes-versions" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

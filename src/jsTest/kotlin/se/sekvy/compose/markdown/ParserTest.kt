@@ -4,7 +4,7 @@ import Parser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ParserTest() {
+class ParserTest {
     @Test
     fun testJsParser() {
         val parser = Parser()

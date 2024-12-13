@@ -1,18 +1,20 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 plugins {
-    kotlin("multiplatform") version "1.7.10"
-    id("org.jetbrains.compose") version "1.3.0"
-    id("org.jetbrains.dokka") version "1.7.10"
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
     id("convention.publication")
     alias(libs.plugins.benManesVersions)
     alias(libs.plugins.kotlinter)
 }
 
 group = "se.sekvy"
-version = "1.0.1-alpha"
+version = "1.0.2-alpha"
 
 repositories {
+    google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
@@ -42,6 +44,10 @@ kotlin {
             }
         }
     }
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "compose-markdown"
+    }
 
     sourceSets {
         val commonMain by getting {
@@ -51,6 +57,10 @@ kotlin {
                 implementation(compose.material)
                 implementation(compose.runtime)
                 implementation(libs.jetbrains.markdown)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
+                implementation(libs.androidx.lifecycle.viewmodel)
+                implementation(libs.androidx.lifecycle.runtime.compose)
             }
         }
         val commonTest by getting {
@@ -69,6 +79,7 @@ kotlin {
                 implementation(npm(libs.plugins.npm.commonmark.core))
             }
         }
+        val wasmJsMain by getting
         val jvmTest by getting
     }
 }

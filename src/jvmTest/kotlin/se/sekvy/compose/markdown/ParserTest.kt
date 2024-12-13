@@ -4,7 +4,7 @@ import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ParserTest() {
+class ParserTest {
     @Test
     fun testIntellijParser() {
         val aft = "Hello *world*"
@@ -44,50 +44,56 @@ class ParserTest() {
 
     @Test
     fun testIntellijBulletList() {
-        val aft = """
+        val aft =
+            """
             A bullet list
             * A
             * B
             * C
-        """.trimIndent()
+            """.trimIndent()
         compareParsers(aft)
     }
 
     @Test
     fun testIntellijUnorderedList() {
         val flavour = CommonMarkFlavourDescriptor()
-        val aft = """
+        val aft =
+            """
             A bullet list
             1. A
             2. B
             3. C
-        """.trimIndent()
+            """.trimIndent()
         compareParsers(aft)
     }
 
     @Test
     fun testIntellijCommon() {
-        val aft = """
+        val aft =
+            """
             1. A
             2. B
             3. C
-        """.trimIndent()
+            """.trimIndent()
         val flavour = CommonMarkFlavourDescriptor()
-        val node1 = org.intellij.markdown.parser.MarkdownParser(flavour)
-            .buildMarkdownTreeFromString(aft)
+        val node1 =
+            org.intellij.markdown.parser
+                .MarkdownParser(flavour)
+                .buildMarkdownTreeFromString(aft)
         val node2 = IntellijParser().parse(aft)
         compareParsers(aft)
     }
 
     @Test
     fun testIntellijCodeFence() {
-        val aft = """
+        val aft =
+            """
             ```kotlin
             expect class MarkdownParser() {
                 fun parse(input : String): NodeType
             }
             ```
-        """.trimIndent()
+            """.trimIndent()
 
         compareParsers(aft)
     }
