@@ -177,3 +177,4 @@ mre-tools/
 /tools/scripts/json-coverage-report.json
 /test-plan.json
 /test-app
+.idea
