@@ -9,4 +9,6 @@ expect class MarkdownParser(
     fun parse(input: String): NodeType
 }
 
-expect enum class ParserType
+enum class ParserType {
+    Intellij, CommonMark
+}

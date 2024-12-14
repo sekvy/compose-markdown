@@ -76,8 +76,3 @@ private fun Node.children(): Sequence<Node> =
             current = current.next
         }
     }
-
-actual enum class ParserType {
-    CommonMark,
-    Intellij,
-}

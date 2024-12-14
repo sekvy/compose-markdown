@@ -22,7 +22,7 @@ import org.commonmark.parser.Parser
 import java.lang.IllegalStateException
 
 actual class MarkdownParser actual constructor(
-    val parserType: ParserType,
+    private val parserType: ParserType,
 ) {
     actual fun parse(input: String): NodeType {
         when (parserType) {
@@ -36,11 +36,6 @@ actual class MarkdownParser actual constructor(
             }
         }
     }
-}
-
-actual enum class ParserType {
-    CommonMark,
-    Intellij,
 }
 
 /**
