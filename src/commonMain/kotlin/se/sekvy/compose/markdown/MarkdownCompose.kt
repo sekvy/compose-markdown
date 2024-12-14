@@ -236,7 +236,7 @@ private fun MDListItems(
     val bottom = if (listBlock.parent is Document) 8.dp else 0.dp
     val start = if (listBlock.parent is Document) 0.dp else 8.dp
     Column(modifier = modifier.showBorder().padding(start = start, bottom = bottom)) {
-        listBlock.children.forEach {
+        listBlock.children.filterNot { it is SoftLineBreak }.forEach {
             when (it) {
                 is BulletList -> MDBulletList(it, modifier)
                 is OrderedList -> MDOrderedList(it, modifier)

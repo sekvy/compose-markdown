@@ -1,7 +1,9 @@
 package se.sekvy.compose.markdown
 
 import org.intellij.markdown.IElementType
+import org.intellij.markdown.MarkdownElementType
 import org.intellij.markdown.MarkdownElementTypes
+import org.intellij.markdown.MarkdownElementTypes.LINK_DESTINATION
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.getTextInNode
@@ -94,7 +96,7 @@ private fun ASTNode.convert(
         MarkdownElementTypes.STRONG -> StrongEmphasisImpl()
         MarkdownElementTypes.CODE_SPAN -> {
             skipChildren = true
-            CodeImpl(literal = getTextInNode(input).toString())
+            CodeImpl(literal = getTextInChildNode(input, MarkdownTokenTypes.TEXT))
         }
         MarkdownTokenTypes.HARD_LINE_BREAK -> {
             HardLineBreakImpl()
@@ -107,10 +109,11 @@ private fun ASTNode.convert(
                         literal = getTextInChildNode(input, MarkdownElementTypes.LINK_DESTINATION),
                     )
                 }
-                else ->
+                else -> {
                     LinkImpl(
                         destination = getTextInChildNode(input, MarkdownElementTypes.LINK_DESTINATION),
                     )
+                }
             }
         }
         MarkdownElementTypes.LINK_TEXT -> {
@@ -119,7 +122,15 @@ private fun ASTNode.convert(
                 literal = getTextInChildNode(input, MarkdownTokenTypes.TEXT),
             )
         }
-        else -> null
+        MarkdownTokenTypes.EOL -> SoftLineBreakImpl()
+        else -> {
+            val currentType = type
+            if (currentType is MarkdownElementType && currentType.isToken && parent is Paragraph) {
+                TextImpl(literal = getTextInNode(input).toString())
+            } else {
+                null
+            }
+        }
     }?.updateNode(input = input, node = this, parent = parent, skipChildren = skipChildren)
 }
 

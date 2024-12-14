@@ -8,6 +8,7 @@ plugins {
     id("convention.publication")
     alias(libs.plugins.benManesVersions)
     alias(libs.plugins.kotlinter)
+    alias(libs.plugins.dokka)
 }
 
 group = "se.sekvy"
@@ -25,10 +26,8 @@ fun KotlinDependencyHandler.npm(notation: Provider<PluginDependency>) : Dependen
 }
 
 kotlin {
+    jvmToolchain(11)
     jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "11"
-        }
         withJava()
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()

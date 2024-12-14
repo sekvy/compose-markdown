@@ -6,6 +6,18 @@ import kotlin.test.assertEquals
 
 class ParserTest {
     @Test
+    fun testIntellijParserBlock() {
+        val aft = "Hello `.kt`"
+        compareParsers(aft)
+    }
+
+    @Test
+    fun testIntellijParserParenthesis() {
+        val aft = "Hello (world)"
+        compareParsers(aft)
+    }
+
+    @Test
     fun testIntellijParser() {
         val aft = "Hello *world*"
         compareParsers(aft)

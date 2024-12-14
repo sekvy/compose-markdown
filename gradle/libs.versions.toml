@@ -6,6 +6,7 @@ jetbrains-markdown = "0.7.3"
 kotlin = "2.1.0"
 compose-multiplatform = "1.7.0"
 androidx-lifecycle = "2.8.4"
+dokka = "1.9.20"
 
 [libraries]
 commonmark-core = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
@@ -28,3 +29,4 @@ benManesVersions = { id = "com.github.ben-manes.versions", version.ref = "ben-ma
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
