@@ -34,20 +34,9 @@ kotlin {
             useJUnitPlatform()
         }
     }
-    js(IR) {
-        browser {
-            testTask {
-                testLogging.showStandardStreams = true
-                useKarma {
-                    useSafari()
-                }
-            }
-        }
-    }
+    js(IR) { browser {} }
     @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "compose-markdown"
-    }
+    wasmJs { browser() }
 
     sourceSets {
         val commonMain by getting {

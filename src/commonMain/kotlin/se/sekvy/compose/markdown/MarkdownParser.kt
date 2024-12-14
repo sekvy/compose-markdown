@@ -10,5 +10,6 @@ expect class MarkdownParser(
 }
 
 enum class ParserType {
-    Intellij, CommonMark
+    Intellij,
+    CommonMark,
 }
