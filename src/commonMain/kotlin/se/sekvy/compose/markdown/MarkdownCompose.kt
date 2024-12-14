@@ -234,7 +234,7 @@ private fun MDListItems(
     item: @Composable (node: NodeType) -> Unit,
 ) {
     val bottom = if (listBlock.parent is Document) 8.dp else 0.dp
-    val start = if (listBlock.parent is Document) 0.dp else 8.dp
+    val start = 8.dp
     Column(modifier = modifier.showBorder().padding(start = start, bottom = bottom)) {
         listBlock.children.filterNot { it is SoftLineBreak }.forEach {
             when (it) {
