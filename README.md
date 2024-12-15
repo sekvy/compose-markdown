@@ -42,5 +42,5 @@ https://github.com/ErikHellman/MarkdownComposer
 
 Markdown parsing uses Commonmark libraries.
 [commonmark-java](https://github.com/commonmark/commonmark-java) for jvm,
-[commonmark.js](https://github.com/commonmark/commonmark.js) for Js. Or [JetBrains/markdown](https://github.com/JetBrains/markdown)
+[commonmark.js](https://github.com/commonmark/commonmark.js) for Js. Or [JetBrains/markdown](https://github.com/JetBrains/markdown) for wasm, js and jvm
 
