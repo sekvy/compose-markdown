@@ -5,7 +5,7 @@ Kotlin Multiplatform library for rendering Markdown with Compose
 commonMain {
     dependencies {
         // ...
-        implementation("se.sekvy:compose-markdown:1.0.0-alpha02")
+        implementation("se.sekvy:compose-markdown:1.0.2-alpha")
     }
 }
 ```
